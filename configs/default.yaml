@@ -20,7 +20,7 @@
 "dataset":
   "train":
     "type": "transcg"
-    "data_dir": "data"
+    "data_dir": "/data/hanat/transcg/"
     "image_size": !!python/tuple [320, 240]
     "use_augmentation": True
     "rgb_augmentation_probability": 0.8

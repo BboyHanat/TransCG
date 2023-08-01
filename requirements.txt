@@ -1,4 +1,4 @@
-PIL
+pillow
 tqdm
 h5py
 numpy
