@@ -44,7 +44,7 @@
   "drop_last": True
 
 "trainer":
-  "batch_size": 32
+  "batch_size": 128
   "test_batch_size": 1
   "multigpu": True
   "max_epoch": 40  
