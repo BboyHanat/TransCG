@@ -18,7 +18,7 @@ from utils.constants import LOSS_INF
 from utils.functions import display_results, to_device
 from time import perf_counter
 
-
+torch.multiprocessing.set_sharing_strategy('file_system')
 logging.setLoggerClass(ColoredLogger)
 logger = logging.getLogger(__name__)
 warnings.simplefilter("ignore", UserWarning)
