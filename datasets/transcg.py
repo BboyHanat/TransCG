@@ -75,10 +75,19 @@ class TransCG(Dataset):
 
     def __getitem__(self, id):
         img_path, camera_type, scene_type, perspective_id = self.sample_info[id]
-        rgb = np.array(Image.open(os.path.join(img_path, 'rgb{}.png'.format(camera_type))), dtype = np.float32)
-        depth = np.array(Image.open(os.path.join(img_path, 'depth{}.png'.format(camera_type))), dtype = np.float32)
-        depth_gt = np.array(Image.open(os.path.join(img_path, 'depth{}-gt.png'.format(camera_type))), dtype = np.float32)
-        depth_gt_mask = np.array(Image.open(os.path.join(img_path, 'depth{}-gt-mask.png'.format(camera_type))), dtype = np.uint8)
+        try:
+            rgb = Image.open(os.path.join(img_path, 'rgb{}.png'.format(camera_type)))
+            rgb = np.array(rgb, dtype = np.float32)
+            depth = Image.open(os.path.join(img_path, 'depth{}.png'.format(camera_type)))
+            depth = np.array(depth, dtype = np.float32)
+            depth_gt = Image.open(os.path.join(img_path, 'depth{}-gt.png'.format(camera_type)))
+            depth_gt = np.array(depth_gt, dtype = np.float32)
+            depth_gt_mask = Image.open(os.path.join(img_path, 'depth{}-gt-mask.png'.format(camera_type)))
+            depth_gt_mask = np.array(depth_gt_mask, dtype = np.uint8)
+        except:
+            print(os.path.join(img_path, 'rgb{}.png'.format(camera_type)))
+
+
         if camera_type == 1:
             depth_coeff = (perspective_id // 20) / 12 + 1
         else:
