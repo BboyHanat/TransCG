@@ -151,7 +151,7 @@ def train(start_epoch):
         min_loss_epoch = None
     for epoch in range(start_epoch, max_epoch):
         logger.info('--> Epoch {}/{}'.format(epoch + 1, max_epoch))
-        # train_one_epoch(epoch)
+        train_one_epoch(epoch)
         loss, metrics_result = test_one_epoch(epoch)
         if lr_scheduler is not None:
             lr_scheduler.step()
