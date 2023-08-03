@@ -72,16 +72,17 @@ def dist_trainer(local_rank, dist_num: int, config: dict):
 
     if os.path.isfile(checkpoint_file):
         gpu_device = torch.device('cuda:{}'.format(local_rank))
-        checkpoint = torch.load(checkpoint_file, map_location=gpu_device)
-        network_model.module.load_state_dict(checkpoint['model_state_dict'])
-        start_epoch = checkpoint['epoch']
-        checkpoint_metrics = checkpoint['metrics']
-        checkpoint_loss = checkpoint['loss']
+        print(gpu_device)
+        # checkpoint = torch.load(checkpoint_file, map_location=gpu_device)
+        # network_model.module.load_state_dict(checkpoint['model_state_dict'])
+        # start_epoch = checkpoint['epoch']
+        # checkpoint_metrics = checkpoint['metrics']
+        # checkpoint_loss = checkpoint['loss']
         logger.info("Checkpoint {} (epoch {}) loaded.".format(checkpoint_file, start_epoch))
     if local_rank == 0:
         logger.info('Building optimizer and learning rate schedulers ...')
     resume = (start_epoch > 0)
-    optimizer = builder.get_optimizer(network_model, resume=resume, resume_lr=builder.get_resume_lr())
+    optimizer = builder.get_optimizer(network_model.module, resume=resume, resume_lr=builder.get_resume_lr())
 
     if local_rank == 0:
         logger.info('Building ddp dataloaders ...')
