@@ -111,11 +111,11 @@ def dist_trainer(local_rank, dist_num: int, config: dict):
     for epoch in range(start_epoch, max_epoch):
         if local_rank == 0:
             logger.info('--> Epoch {}/{}'.format(epoch + 1, max_epoch))
-        train_one_epoch(network_model, optimizer,
-                        criterion, train_dataloader,
-                        lr_scheduler, summary_writer,
-                        local_rank, train_steps,
-                        epoch, dist_num)
+        # train_one_epoch(network_model, optimizer,
+        #                 criterion, train_dataloader,
+        #                 lr_scheduler, summary_writer,
+        #                 local_rank, train_steps,
+        #                 epoch, dist_num)
         loss, metrics_result = test_one_epoch(network_model, test_dataloader,
                                               criterion, metrics,
                                               summary_writer,  local_rank,
