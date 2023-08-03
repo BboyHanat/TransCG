@@ -57,6 +57,10 @@ def dist_trainer(local_rank, dist_num: int, config: dict):
     builder = ConfigBuilder(**config)
     logger.info('Building models ...')
     network_model = builder.get_model()
+    # convert model to ddp
+    network_model = SyncBatchNorm.convert_sync_batchnorm(network_model).to(local_rank)
+    network_model = parallel.DistributedDataParallel(network_model,
+                                                     device_ids=[local_rank])
 
     if local_rank == 0:
         logger.info('Checking checkpoints ...')
@@ -65,7 +69,6 @@ def dist_trainer(local_rank, dist_num: int, config: dict):
     max_epoch = builder.get_max_epoch()
     stats_dir = builder.get_stats_dir()
     checkpoint_file = os.path.join(stats_dir, 'checkpoint.tar')
-
 
     if os.path.isfile(checkpoint_file):
         gpu_device = torch.device('cuda:{}'.format(local_rank))
@@ -80,10 +83,6 @@ def dist_trainer(local_rank, dist_num: int, config: dict):
     resume = (start_epoch > 0)
     optimizer = builder.get_optimizer(network_model, resume=resume, resume_lr=builder.get_resume_lr())
 
-    # convert model to ddp
-    network_model = SyncBatchNorm.convert_sync_batchnorm(network_model).to(local_rank)
-    network_model = parallel.DistributedDataParallel(network_model,
-                                                     device_ids=[local_rank])
     if local_rank == 0:
         logger.info('Building ddp dataloaders ...')
     train_dataloader, len_of_train, train_batch_size = builder.get_dataloader_ddp(split='train')
