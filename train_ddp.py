@@ -60,7 +60,8 @@ def dist_trainer(local_rank, dist_num: int, config: dict):
     logger.info('Building models ...')
     network_model = builder.get_model()
 
-    logger.info('Checking checkpoints ...')
+    if local_rank == 0:
+        logger.info('Checking checkpoints ...')
     start_epoch = 0
     checkpoint_loss = 10000000000.0
     max_epoch = builder.get_max_epoch()
@@ -75,8 +76,8 @@ def dist_trainer(local_rank, dist_num: int, config: dict):
         checkpoint_metrics = checkpoint['metrics']
         checkpoint_loss = checkpoint['loss']
         logger.info("Checkpoint {} (epoch {}) loaded.".format(checkpoint_file, start_epoch))
-
-    logger.info('Building optimizer and learning rate schedulers ...')
+    if local_rank == 0:
+        logger.info('Building optimizer and learning rate schedulers ...')
     resume = (start_epoch > 0)
     optimizer = builder.get_optimizer(network_model, resume=resume, resume_lr=builder.get_resume_lr())
 
@@ -84,11 +85,12 @@ def dist_trainer(local_rank, dist_num: int, config: dict):
     network_model = SyncBatchNorm.convert_sync_batchnorm(network_model).to(local_rank)
     network_model = parallel.DistributedDataParallel(network_model,
                                                      device_ids=[local_rank])
-    logger.info('Building ddp dataloaders ...')
+    if local_rank == 0:
+        logger.info('Building ddp dataloaders ...')
     train_dataloader, len_of_train, train_batch_size = builder.get_dataloader_ddp(split='train')
     test_dataloader, len_of_val, val_batch_size = builder.get_dataloader_ddp(split='test')
-
-    logger.info('Building optimizer and learning rate schedulers ...')
+    if local_rank == 0:
+        logger.info('Building optimizer and learning rate schedulers ...')
     resume = (start_epoch > 0)
 
     lr_scheduler = builder.get_lr_scheduler(optimizer, resume=resume,
@@ -108,7 +110,8 @@ def dist_trainer(local_rank, dist_num: int, config: dict):
     train_steps = int(len_of_train / train_batch_size / dist_num)
 
     for epoch in range(start_epoch, max_epoch):
-        logger.info('--> Epoch {}/{}'.format(epoch + 1, max_epoch))
+        if local_rank == 0:
+            logger.info('--> Epoch {}/{}'.format(epoch + 1, max_epoch))
         train_one_epoch(network_model, optimizer,
                         criterion, train_dataloader,
                         lr_scheduler, summary_writer,
