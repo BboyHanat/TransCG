@@ -73,7 +73,7 @@ def dist_trainer(local_rank, dist_num: int, config: dict):
     if os.path.isfile(checkpoint_file):
         gpu_device = torch.device('cuda:{}'.format(local_rank))
         checkpoint = torch.load(checkpoint_file, map_location=gpu_device)
-        network_model.load_state_dict(checkpoint['model_state_dict'])
+        network_model.module.load_state_dict(checkpoint['model_state_dict'])
         start_epoch = checkpoint['epoch']
         checkpoint_metrics = checkpoint['metrics']
         checkpoint_loss = checkpoint['loss']
