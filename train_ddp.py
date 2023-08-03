@@ -8,18 +8,16 @@ import warnings
 
 import numpy as np
 import torch.nn as nn
-from tqdm import tqdm
 import torch.distributed as dist
 import torch.backends.cudnn as cudnn
 from utils.logger import ColoredLogger
 from utils.builder import ConfigBuilder
 from utils.constants import LOSS_INF
-from utils.functions import display_results, to_device
+from utils.functions import to_device
 from time import perf_counter
 import torch.multiprocessing as mp
 from torch.nn import SyncBatchNorm, parallel
-from torch.utils.tensorboard import SummaryWriter
-from utils.dist_util import reduce_mean, accuracy, AverageMeter
+from utils.dist_util import reduce_mean, AverageMeter
 
 
 torch.multiprocessing.set_sharing_strategy('file_system')
@@ -153,35 +151,32 @@ def train_one_epoch(network_model:nn.Module,
     if lr_scheduler is not None:
         logger.info('Learning rate: {}.'.format(lr_scheduler.get_last_lr()))
     network_model.train()
-    with tqdm(train_dataloader) as pbar:
-        train_step = 0
-        for data_dict in pbar:
-            optimizer.zero_grad()
-            gpu_device = torch.device('cuda:{}'.format(local_rank))
-            data_dict = to_device(data_dict, gpu_device)
-            res = network_model(data_dict['rgb'], data_dict['depth'])
-            depth_scale = data_dict['depth_max'] - data_dict['depth_min']
-            res = res * depth_scale.reshape(-1, 1, 1) + data_dict['depth_min'].reshape(-1, 1, 1)
-            data_dict['pred'] = res
-            loss_dict = criterion(data_dict)
-            loss = loss_dict['loss']
-            loss.backward()
-            optimizer.step()
-            torch.distributed.barrier()  # noqa
-            reduced_loss = dict()
+    for ts, data_dict in enumerate(train_dataloader):
+        optimizer.zero_grad()
+        gpu_device = torch.device('cuda:{}'.format(local_rank))
+        data_dict = to_device(data_dict, gpu_device)
+        res = network_model(data_dict['rgb'], data_dict['depth'])
+        depth_scale = data_dict['depth_max'] - data_dict['depth_min']
+        res = res * depth_scale.reshape(-1, 1, 1) + data_dict['depth_min'].reshape(-1, 1, 1)
+        data_dict['pred'] = res
+        loss_dict = criterion(data_dict)
+        loss = loss_dict['loss']
+        loss.backward()
+        optimizer.step()
+        torch.distributed.barrier()  # noqa
+        reduced_loss = dict()
+        for key in loss_dict.keys():
+            reduced_loss[key] = reduce_mean(loss_dict[key], dist_num)
+        if local_rank == 0:
+            description = 'Epoch {} Step {}, '.format(epoch + 1, ts)
+            for key in reduced_loss.keys():
+                description = description + key + ": {:.8f}".format(reduced_loss[key].item()) + "  "
+            logger.info(description)
             for key in loss_dict.keys():
                 reduced_loss[key] = reduce_mean(loss_dict[key], dist_num)
-            if local_rank == 0:
-                description = 'Epoch {} Step {}, '.format(epoch + 1, train_step)
-                for key in reduced_loss.keys():
-                    description = description + key + ": {:.8f}".format(reduced_loss[key].item()) + "  "
-                pbar.set_description(description)
-                for key in loss_dict.keys():
-                    reduced_loss[key] = reduce_mean(loss_dict[key], dist_num)
-                    summary_writer.add_scalar("train/"+key,
-                                              reduced_loss[key].data.cpu().numpy(),
-                                              global_step=epoch * train_steps + train_step)
-            train_step += 1
+                summary_writer.add_scalar("train/"+key,
+                                          reduced_loss[key].data.cpu().numpy(),
+                                          global_step=epoch * train_steps + ts)
 
 def test_one_epoch(model,
                    test_dataloader,
@@ -197,8 +192,8 @@ def test_one_epoch(model,
     metrics.clear()
     loss_avg = AverageMeter('loss', ':.4e')
 
-    with tqdm(test_dataloader) as pbar:
-        for data_dict in pbar:
+    with torch.no_grad():
+        for vs, data_dict in enumerate(test_dataloader):
             gpu_device = torch.device('cuda:{}'.format(local_rank))
             data_dict = to_device(data_dict, gpu_device)
             with torch.no_grad():
@@ -217,7 +212,7 @@ def test_one_epoch(model,
                     description = 'Epoch {}, '.format(epoch + 1)
                     for key in reduced_loss.keys():
                         description = description + key + ": {:.8f}".format(reduced_loss[key].item()) + "  "
-                    pbar.set_description(description)
+                    logger.info(description)
 
     metrics_result = metrics.get_results()
     metrics_result_reduce = dict()
