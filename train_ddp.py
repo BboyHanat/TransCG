@@ -5,7 +5,7 @@ import random
 import logging
 import argparse
 import warnings
-
+import time
 import numpy as np
 import torch.nn as nn
 import torch.distributed as dist
@@ -55,13 +55,15 @@ def dist_trainer(local_rank, dist_num: int, config: dict):
                             rank=local_rank)
 
     builder = ConfigBuilder(**config)
-    logger.info('Building models ...')
+    logger.info('Building models ...11111111111111111111111111111111111111111111111111111111')
     network_model = builder.get_model()
     network_model.to(local_rank)
     # convert model to ddp
     network_model = SyncBatchNorm.convert_sync_batchnorm(network_model)
     network_model = parallel.DistributedDataParallel(network_model,
                                                      device_ids=[local_rank])
+    logger.info('222222222222222222222222222222222222222222222222222222222222222222222222')
+
 
     if local_rank == 0:
         logger.info('Checking checkpoints ...')
@@ -83,12 +85,19 @@ def dist_trainer(local_rank, dist_num: int, config: dict):
     if local_rank == 0:
         logger.info('Building optimizer and learning rate schedulers ...')
     resume = (start_epoch > 0)
+    logger.info('33333333333333333333333333333333333333333333333333333333333333333333333333333333333')
+    time.sleep(3)
     optimizer = builder.get_optimizer(network_model, resume=resume, resume_lr=builder.get_resume_lr())
+    logger.info('44444444444444444444444444444444444444444444444444444444444444444444444444444444444')
 
     if local_rank == 0:
         logger.info('Building ddp dataloaders ...')
+
+    time.sleep(3)
     train_dataloader, len_of_train, train_batch_size = builder.get_dataloader_ddp(split='train')
     test_dataloader, len_of_val, test_batch_size = builder.get_dataloader_ddp(split='test')
+    logger.info('555555555555555555555555555555555555555555555555555555555555555555555555555555555555')
+
     if local_rank == 0:
         logger.info('Building optimizer and learning rate schedulers ...')
     resume = (start_epoch > 0)
