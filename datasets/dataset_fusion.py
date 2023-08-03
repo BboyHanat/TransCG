@@ -11,3 +11,4 @@ from utils.data_preparation import process_data, exr_loader
 class FusedDataset(Dataset):
 
     def __init__(self, data_dir, split='train', **kwargs):
+        pass
