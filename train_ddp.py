@@ -20,7 +20,7 @@ from torch.nn import SyncBatchNorm, parallel
 from utils.dist_util import reduce_mean, AverageMeter
 
 
-torch.multiprocessing.set_sharing_strategy('file_system')
+# torch.multiprocessing.set_sharing_strategy('file_system')
 logging.setLoggerClass(ColoredLogger)
 logger = logging.getLogger(__name__)
 warnings.simplefilter("ignore", UserWarning)
