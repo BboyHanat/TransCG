@@ -62,6 +62,9 @@ def dist_trainer(local_rank, dist_num: int, config: dict):
     network_model = SyncBatchNorm.convert_sync_batchnorm(network_model)
     network_model = parallel.DistributedDataParallel(network_model,
                                                      device_ids=[local_rank])
+    time.sleep(10)
+
+
     logger.info('222222222222222222222222222222222222222222222222222222222222222222222222')
 
 
