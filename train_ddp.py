@@ -126,8 +126,7 @@ def dist_trainer(local_rank, dist_num: int, config: dict):
                                               criterion, metrics,
                                               summary_writer,  local_rank,
                                               epoch, test_batch_size, dist_num)
-        loss = 0.1
-        metrics_result = 0.1
+
         if lr_scheduler is not None:
             lr_scheduler.step()
         criterion.step()
@@ -201,10 +200,10 @@ def test_one_epoch(model,
     model.eval()
     metrics.clear()
     loss_avg = AverageMeter('loss', ':.4e')
-
+    gpu_device = torch.device('cuda:{}'.format(local_rank))
     with torch.no_grad():
         for vs, data_dict in enumerate(test_dataloader):
-            gpu_device = torch.device('cuda:{}'.format(local_rank))
+
             data_dict = to_device(data_dict, gpu_device)
             with torch.no_grad():
                 res = model(data_dict['rgb'], data_dict['depth'])
@@ -219,7 +218,7 @@ def test_one_epoch(model,
                     reduced_loss[key] = reduce_mean(loss_dict[key], dist_num)
                 loss_avg.update(reduced_loss["loss"], batch_size)
                 if local_rank == 0:
-                    description = 'Epoch {}, '.format(epoch + 1)
+                    description = 'Epoch {}, Step {} '.format(epoch + 1, vs)
                     for key in reduced_loss.keys():
                         description = description + key + ": {:.8f}".format(reduced_loss[key].item()) + "  "
                     logger.info(description)
@@ -227,7 +226,7 @@ def test_one_epoch(model,
     metrics_result = metrics.get_results()
     metrics_result_reduce = dict()
     for key in metrics_result.keys():
-        metrics_result_reduce[key] = reduce_mean(torch.tensor(metrics_result[key]), dist_num)
+        metrics_result_reduce[key] = reduce_mean(torch.tensor(metrics_result[key]).to(gpu_device), dist_num)
     if local_rank == 0:
         for key in metrics_result.keys():
             summary_writer.add_scalar(key,
