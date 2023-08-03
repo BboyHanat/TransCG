@@ -226,7 +226,7 @@ def test_one_epoch(model,
     metrics_result = metrics.get_results()
     metrics_result_reduce = dict()
     for key in metrics_result.keys():
-        metrics_result_reduce[key] = reduce_mean(torch.tensor(metrics_result[key]).to(gpu_device), dist_num)
+        metrics_result_reduce[key] = reduce_mean(torch.tensor(metrics_result[key]).to(gpu_device), float(dist_num))
     if local_rank == 0:
         for key in metrics_result.keys():
             summary_writer.add_scalar(key,
