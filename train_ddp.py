@@ -68,7 +68,7 @@ def dist_trainer(local_rank, dist_num: int, config: dict):
 
 
     if os.path.isfile(checkpoint_file):
-        checkpoint = torch.load(checkpoint_file)
+        checkpoint = torch.load(checkpoint_file, map_location="cpu")
         network_model.load_state_dict(checkpoint['model_state_dict'])
         start_epoch = checkpoint['epoch']
         checkpoint_metrics = checkpoint['metrics']
@@ -116,8 +116,8 @@ def dist_trainer(local_rank, dist_num: int, config: dict):
                         lr_scheduler, summary_writer,
                         local_rank, train_steps,
                         epoch, dist_num)
-        loss, metrics_result = test_one_epoch(network_model, criterion,
-                                              train_dataloader, metrics,
+        loss, metrics_result = test_one_epoch(network_model, test_dataloader,
+                                              criterion, metrics,
                                               summary_writer,  local_rank,
                                               epoch, dist_num)
         if lr_scheduler is not None:
