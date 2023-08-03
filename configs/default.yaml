@@ -39,7 +39,7 @@
     "with_original": True
 
 "dataloader":
-  "num_workers": 32
+  "num_workers": 12
   "shuffle": False
   "drop_last": True
 

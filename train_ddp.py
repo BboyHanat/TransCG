@@ -161,10 +161,11 @@ def train_one_epoch(network_model:nn.Module,
         res = res * depth_scale.reshape(-1, 1, 1) + data_dict['depth_min'].reshape(-1, 1, 1)
         data_dict['pred'] = res
         loss_dict = criterion(data_dict)
+        torch.distributed.barrier()  # noqa
         loss = loss_dict['loss']
         loss.backward()
         optimizer.step()
-        torch.distributed.barrier()  # noqa
+
         reduced_loss = dict()
         for key in loss_dict.keys():
             reduced_loss[key] = reduce_mean(loss_dict[key], dist_num)
