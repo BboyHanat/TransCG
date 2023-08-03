@@ -65,4 +65,6 @@
 
 dist:
   dist_num: 8
+  ip: 0.0.0.0
+  port: 12345
 

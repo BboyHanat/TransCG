@@ -48,9 +48,8 @@ def dist_trainer(local_rank, dist_num: int, config: dict):
     :param config: distribute training parameters
     :return:
     """
-    train_cfg = config['train_cfg']
     init_seeds(local_rank + 1, cuda_deterministic=False)
-    init_method = 'tcp://' + config['dist_cfg']['ip'] + ':' + str(config['dist_cfg']['port'])
+    init_method = 'tcp://' + config['dist']['ip'] + ':' + str(config['dist']['port'])
     dist.init_process_group(backend='nccl',  # noqa
                             init_method=init_method,
                             world_size=dist_num,
