@@ -244,7 +244,7 @@ def main():
         cfg_params = yaml.load(cfg_file, Loader = yaml.FullLoader)
 
     mp.spawn(dist_trainer, nprocs=cfg_params['dist']['dist_num'],
-             args=(cfg_params['dist_num'], cfg_params))
+             args=(cfg_params["dist"]['dist_num'], cfg_params))
 
 
 if __name__ == "__main__":
