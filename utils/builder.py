@@ -10,7 +10,6 @@ from utils.logger import ColoredLogger
 from torch.utils.data import ConcatDataset
 from torch.utils.tensorboard import SummaryWriter
 
-
 logging.setLoggerClass(ColoredLogger)
 logger = logging.getLogger(__name__)
 
@@ -39,6 +38,7 @@ class ConfigBuilder(object):
 
         - fetch inferencer parameters (e.g., inference image size, inference checkpoint path, inference min depth and max depth, etc.)
     """
+
     def __init__(self, **params):
         """
         Set the default configuration for the configuration builder.
@@ -61,8 +61,7 @@ class ConfigBuilder(object):
         self.inference_params = params.get('inference', {})
         self.summary_param = params.get('summary', {})
 
-    
-    def get_model(self, model_params = None):
+    def get_model(self, model_params=None):
         """
         Get the model from configuration.
 
@@ -86,8 +85,8 @@ class ConfigBuilder(object):
         else:
             raise NotImplementedError('Invalid model type.')
         return model
-    
-    def get_optimizer(self, model, optimizer_params = None, resume = False, resume_lr = None):
+
+    def get_optimizer(self, model, optimizer_params=None, resume=False, resume_lr=None):
         """
         Get the optimizer from configuration.
         
@@ -114,7 +113,7 @@ class ConfigBuilder(object):
         params = optimizer_params.get('params', {})
         if resume:
             network_params = [{'params': model.parameters(), 'initial_lr': resume_lr}]
-            params.update(lr = resume_lr)
+            params.update(lr=resume_lr)
         else:
             network_params = model.parameters()
         if type == 'SGD':
@@ -136,8 +135,8 @@ class ConfigBuilder(object):
         else:
             raise NotImplementedError('Invalid optimizer type.')
         return optimizer
-    
-    def get_lr_scheduler(self, optimizer, lr_scheduler_params = None, resume = False, resume_epoch = None):
+
+    def get_lr_scheduler(self, optimizer, lr_scheduler_params=None, resume=False, resume_epoch=None):
         """
         Get the learning rate scheduler from configuration.
         
@@ -163,7 +162,7 @@ class ConfigBuilder(object):
         type = lr_scheduler_params.get('type', '')
         params = lr_scheduler_params.get('params', {})
         if resume:
-            params.update(last_epoch = resume_epoch)
+            params.update(last_epoch=resume_epoch)
         if type == 'MultiStepLR':
             scheduler = MultiStepLR(optimizer, **params)
         elif type == 'ExponentialLR':
@@ -181,8 +180,8 @@ class ConfigBuilder(object):
         else:
             raise NotImplementedError('Invalid learning rate scheduler type.')
         return scheduler
-    
-    def get_dataset(self, dataset_params = None, split = 'train'):
+
+    def get_dataset(self, dataset_params=None, split='train'):
         """
         Get the dataset from configuration.
 
@@ -208,15 +207,15 @@ class ConfigBuilder(object):
         if type(dataset_params) == dict:
             dataset_type = str.lower(dataset_params.get('type', 'transcg'))
             if dataset_type == 'transcg':
-                dataset = TransCG(split = split, **dataset_params)
+                dataset = TransCG(split=split, **dataset_params)
             elif dataset_type == 'cleargrasp-real':
-                dataset = ClearGraspRealWorld(split = split, **dataset_params)
+                dataset = ClearGraspRealWorld(split=split, **dataset_params)
             elif dataset_type == 'cleargrasp-syn':
-                dataset = ClearGraspSynthetic(split = split, **dataset_params)
+                dataset = ClearGraspSynthetic(split=split, **dataset_params)
             elif dataset_type == 'omniverse':
-                dataset = OmniverseObject(split = split, **dataset_params)
+                dataset = OmniverseObject(split=split, **dataset_params)
             elif dataset_type == 'transparent-object':
-                dataset = TransparentObject(split = split, **dataset_params)
+                dataset = TransparentObject(split=split, **dataset_params)
             else:
                 raise NotImplementedError('Invalid dataset type: {}.'.format(dataset_type))
             logger.info('Load {} dataset as {}ing set with {} samples.'.format(dataset_type, split, len(dataset)))
@@ -230,15 +229,15 @@ class ConfigBuilder(object):
                 else:
                     dataset_types.append(dataset_type)
                 if dataset_type == 'transcg':
-                    dataset = TransCG(split = split, **single_dataset_params)
+                    dataset = TransCG(split=split, **single_dataset_params)
                 elif dataset_type == 'cleargrasp-real':
-                    dataset = ClearGraspRealWorld(split = split, **single_dataset_params)
+                    dataset = ClearGraspRealWorld(split=split, **single_dataset_params)
                 elif dataset_type == 'cleargrasp-syn':
-                    dataset = ClearGraspSynthetic(split = split, **single_dataset_params)
+                    dataset = ClearGraspSynthetic(split=split, **single_dataset_params)
                 elif dataset_type == 'omniverse':
-                    dataset = OmniverseObject(split = split, **single_dataset_params)
+                    dataset = OmniverseObject(split=split, **single_dataset_params)
                 elif dataset_type == 'transparent-object':
-                    dataset = TransparentObject(split = split, **single_dataset_params)
+                    dataset = TransparentObject(split=split, **single_dataset_params)
                 else:
                     raise NotImplementedError('Invalid dataset type: {}.'.format(dataset_type))
                 dataset_list.append(dataset)
@@ -247,8 +246,8 @@ class ConfigBuilder(object):
         else:
             raise AttributeError('Invalid dataset format.')
         return dataset
-    
-    def get_dataloader(self, dataset_params = None, split = 'train', batch_size = None, dataloader_params = None):
+
+    def get_dataloader(self, dataset_params=None, split='train', batch_size=None, dataloader_params=None):
         """
         Get the dataloader from configuration.
 
@@ -277,12 +276,12 @@ class ConfigBuilder(object):
         if dataloader_params is None:
             dataloader_params = self.dataloader_params
         dataset = self.get_dataset(dataset_params, split)
-        len_of_dataset = len(dataset)
+
         return DataLoader(
             dataset,
-            batch_size = batch_size,
+            batch_size=batch_size,
             **dataloader_params
-        ), len_of_dataset
+        )
 
     def get_dataloader_ddp(self, dataset_params=None, split='train', batch_size=None, dataloader_params=None):
         """
@@ -316,14 +315,14 @@ class ConfigBuilder(object):
         train_sampler = torch.utils.data.distributed.DistributedSampler(dataset)
 
         dataloader_params["sampler"] = train_sampler
-        train_batch_data = DataLoader(dataset,
-                                      batch_size=batch_size,
-                                      **dataloader_params)
+        len_of_dataset = len(dataset)
+        batch_data = DataLoader(dataset,
+                                batch_size=batch_size,
+                                **dataloader_params)
 
-        return train_batch_data
+        return batch_data, len_of_dataset
 
-
-    def get_max_epoch(self, trainer_params = None):
+    def get_max_epoch(self, trainer_params=None):
         """
         Get the max epoch from configuration.
 
@@ -340,8 +339,8 @@ class ConfigBuilder(object):
         if trainer_params is None:
             trainer_params = self.trainer_params
         return trainer_params.get('max_epoch', 40)
-    
-    def get_stats_dir(self, stats_params = None):
+
+    def get_stats_dir(self, stats_params=None):
         """
         Get the statistics directory from configuration.
 
@@ -363,8 +362,8 @@ class ConfigBuilder(object):
         if os.path.exists(stats_res_dir) == False:
             os.makedirs(stats_res_dir)
         return stats_res_dir
-    
-    def multigpu(self, trainer_params = None):
+
+    def multigpu(self, trainer_params=None):
         """
         Get the multigpu settings from configuration.
 
@@ -381,8 +380,8 @@ class ConfigBuilder(object):
         if trainer_params is None:
             trainer_params = self.trainer_params
         return trainer_params.get('multigpu', False)
-    
-    def get_resume_lr(self, trainer_params = None):
+
+    def get_resume_lr(self, trainer_params=None):
         """
         Get the resume learning rate from configuration.
 
@@ -400,7 +399,7 @@ class ConfigBuilder(object):
             trainer_params = self.trainer_params
         return trainer_params.get('resume_lr', 0.001)
 
-    def get_criterion(self, criterion_params = None):
+    def get_criterion(self, criterion_params=None):
         """
         Get the criterion settings from configuration.
 
@@ -420,8 +419,8 @@ class ConfigBuilder(object):
         from utils.criterion import Criterion
         criterion = Criterion(**criterion_params)
         return criterion
-    
-    def get_metrics(self, metrics_params = None):
+
+    def get_metrics(self, metrics_params=None):
         """
         Get the metrics settings from configuration.
 
@@ -437,12 +436,15 @@ class ConfigBuilder(object):
         """
         if metrics_params is None:
             metrics_params = self.metrics_params
-        metrics_list = metrics_params.get('types', ['MSE', 'MaskedMSE', 'RMSE', 'MaskedRMSE', 'REL', 'MaskedREL', 'MAE', 'MaskedMAE', 'Threshold@1.05', 'MaskedThreshold@1.05', 'Threshold@1.10', 'MaskedThreshold@1.10', 'Threshold@1.25', 'MaskedThreshold@1.25'])
+        metrics_list = metrics_params.get('types', ['MSE', 'MaskedMSE', 'RMSE', 'MaskedRMSE', 'REL', 'MaskedREL', 'MAE',
+                                                    'MaskedMAE', 'Threshold@1.05', 'MaskedThreshold@1.05',
+                                                    'Threshold@1.10', 'MaskedThreshold@1.10', 'Threshold@1.25',
+                                                    'MaskedThreshold@1.25'])
         from utils.metrics import MetricsRecorder
-        metrics = MetricsRecorder(metrics_list = metrics_list, **metrics_params)
+        metrics = MetricsRecorder(metrics_list=metrics_list, **metrics_params)
         return metrics
 
-    def get_summary_writer(self, summary_path = None):
+    def get_summary_writer(self, summary_path=None):
         """
 
         :param summary_path:
@@ -453,7 +455,7 @@ class ConfigBuilder(object):
         summary = SummaryWriter(log_dir=summary_path)
         return summary
 
-    def get_inference_image_size(self, inference_params = None):
+    def get_inference_image_size(self, inference_params=None):
         """
         Get the inference image size from inference configuration.
 
@@ -470,8 +472,8 @@ class ConfigBuilder(object):
         if inference_params is None:
             inference_params = self.inference_params
         return inference_params.get('image_size', (320, 240))
-    
-    def get_inference_checkpoint_path(self, inference_params = None):
+
+    def get_inference_checkpoint_path(self, inference_params=None):
         """
         Get the inference checkpoint path from inference configuration.
 
@@ -488,8 +490,8 @@ class ConfigBuilder(object):
         if inference_params is None:
             inference_params = self.inference_params
         return inference_params.get('checkpoint_path', os.path.join('checkpoint', 'checkpoint.tar'))
-    
-    def get_inference_cuda_id(self, inference_params = None):
+
+    def get_inference_cuda_id(self, inference_params=None):
         """
         Get the inference CUDA ID from inference configuration.
 
@@ -507,7 +509,7 @@ class ConfigBuilder(object):
             inference_params = self.inference_params
         return inference_params.get('cuda_id', 0)
 
-    def get_inference_depth_min_max(self, inference_params = None):
+    def get_inference_depth_min_max(self, inference_params=None):
         """
         Get the min and max depth from inference configuration.
 
@@ -526,8 +528,8 @@ class ConfigBuilder(object):
         depth_min = inference_params.get('depth_min', 0.3)
         depth_max = inference_params.get('depth_max', 1.5)
         return depth_min, depth_max
-    
-    def get_inference_depth_norm(self, inference_params = None):
+
+    def get_inference_depth_norm(self, inference_params=None):
         """
         Get the depth normalization coefficient from inference configuration.
 
