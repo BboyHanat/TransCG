@@ -56,24 +56,14 @@ def dist_trainer(local_rank, dist_num: int, config: dict):
     torch.cuda.set_device(local_rank)
 
     builder = ConfigBuilder(**config)
-    logger.info('Building models ...11111111111111111111111111111111111111111111111111111111')
+    logger.info('Building models ...')
     network_model = builder.get_model()
-    logger.info('000000000000000000000000000000000000000000000000000000000000000000000000000')
 
     network_model.to(local_rank)
-    # network_model.cuda()
-    logger.info('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
     # convert model to ddp
     network_model = parallel.DistributedDataParallel(network_model,
                                                      device_ids=[local_rank])
-    time.sleep(10)
-    logger.info('cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc    {}'.format(local_rank))
     network_model = SyncBatchNorm.convert_sync_batchnorm(network_model)
-    time.sleep(10)
-
-
-    logger.info('222222222222222222222222222222222222222222222222222222222222222222222222')
-
 
     if local_rank == 0:
         logger.info('Checking checkpoints ...')
@@ -85,20 +75,16 @@ def dist_trainer(local_rank, dist_num: int, config: dict):
 
     if os.path.isfile(checkpoint_file):
         gpu_device = torch.device('cuda:{}'.format(local_rank))
-        print(gpu_device)
-        # checkpoint = torch.load(checkpoint_file, map_location=gpu_device)
-        # network_model.module.load_state_dict(checkpoint['model_state_dict'])
-        # start_epoch = checkpoint['epoch']
-        # checkpoint_metrics = checkpoint['metrics']
-        # checkpoint_loss = checkpoint['loss']
+        checkpoint = torch.load(checkpoint_file, map_location=gpu_device)
+        network_model.module.load_state_dict(checkpoint['model_state_dict'])
+        start_epoch = checkpoint['epoch']
+        checkpoint_metrics = checkpoint['metrics']
+        checkpoint_loss = checkpoint['loss']
         logger.info("Checkpoint {} (epoch {}) loaded.".format(checkpoint_file, start_epoch))
     if local_rank == 0:
         logger.info('Building optimizer and learning rate schedulers ...')
     resume = (start_epoch > 0)
-    logger.info('33333333333333333333333333333333333333333333333333333333333333333333333333333333333')
-    time.sleep(3)
     optimizer = builder.get_optimizer(network_model, resume=resume, resume_lr=builder.get_resume_lr())
-    logger.info('44444444444444444444444444444444444444444444444444444444444444444444444444444444444')
 
     if local_rank == 0:
         logger.info('Building ddp dataloaders ...')
@@ -106,7 +92,6 @@ def dist_trainer(local_rank, dist_num: int, config: dict):
     time.sleep(3)
     train_dataloader, len_of_train, train_batch_size = builder.get_dataloader_ddp(split='train')
     test_dataloader, len_of_val, test_batch_size = builder.get_dataloader_ddp(split='test')
-    logger.info('555555555555555555555555555555555555555555555555555555555555555555555555555555555555')
 
     if local_rank == 0:
         logger.info('Building optimizer and learning rate schedulers ...')
@@ -137,10 +122,10 @@ def dist_trainer(local_rank, dist_num: int, config: dict):
                         lr_scheduler, summary_writer,
                         local_rank, train_steps,
                         epoch, dist_num)
-        # loss, metrics_result = test_one_epoch(network_model, test_dataloader,
-        #                                       criterion, metrics,
-        #                                       summary_writer,  local_rank,
-        #                                       epoch, test_batch_size, dist_num)
+        loss, metrics_result = test_one_epoch(network_model, test_dataloader,
+                                              criterion, metrics,
+                                              summary_writer,  local_rank,
+                                              epoch, test_batch_size, dist_num)
         loss = 0.1
         metrics_result = 0.1
         if lr_scheduler is not None:
