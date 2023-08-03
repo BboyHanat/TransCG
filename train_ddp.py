@@ -106,7 +106,8 @@ def dist_trainer(local_rank, dist_num: int, config: dict):
         min_loss_epoch = None
 
     train_steps = int(len_of_train / train_batch_size / dist_num)
-
+    if local_rank == 0:
+        logger.info('One epoch train steps: {}'.format(train_steps))
     for epoch in range(start_epoch, max_epoch):
         if local_rank == 0:
             logger.info('--> Epoch {}/{}'.format(epoch + 1, max_epoch))
