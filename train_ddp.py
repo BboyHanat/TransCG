@@ -86,7 +86,7 @@ def dist_trainer(local_rank, dist_num: int, config: dict):
     if local_rank == 0:
         logger.info('Building ddp dataloaders ...')
     train_dataloader, len_of_train, train_batch_size = builder.get_dataloader_ddp(split='train')
-    test_dataloader, len_of_val, val_batch_size = builder.get_dataloader_ddp(split='test')
+    test_dataloader, len_of_val, test_batch_size = builder.get_dataloader_ddp(split='test')
     if local_rank == 0:
         logger.info('Building optimizer and learning rate schedulers ...')
     resume = (start_epoch > 0)
@@ -119,7 +119,7 @@ def dist_trainer(local_rank, dist_num: int, config: dict):
         loss, metrics_result = test_one_epoch(network_model, test_dataloader,
                                               criterion, metrics,
                                               summary_writer,  local_rank,
-                                              epoch, dist_num)
+                                              epoch, test_batch_size, dist_num)
         if lr_scheduler is not None:
             lr_scheduler.step()
         criterion.step()
@@ -186,6 +186,7 @@ def test_one_epoch(model,
                    summary_writer,
                    local_rank,
                    epoch,
+                   batch_size,
                    dist_num):
 
     logger.info('Start testing process in epoch {}.'.format(epoch + 1))
@@ -208,7 +209,7 @@ def test_one_epoch(model,
                 reduced_loss = dict()
                 for key in loss_dict.keys():
                     reduced_loss[key] = reduce_mean(loss_dict[key], dist_num)
-                loss_avg.update(reduced_loss["loss"], data_dict.size()[0])
+                loss_avg.update(reduced_loss["loss"], batch_size)
                 if local_rank == 0:
                     description = 'Epoch {}, '.format(epoch + 1)
                     for key in reduced_loss.keys():
