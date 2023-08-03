@@ -227,7 +227,8 @@ def test_one_epoch(model,
     metrics_result = metrics.get_results()
     metrics_result_reduce = dict()
     for key in metrics_result.keys():
-        print(key)
+        if key == "samples":
+            continue
         metrics_result_reduce[key] = reduce_mean(metrics_result[key], dist_num)
     if local_rank == 0:
         for key in metrics_result.keys():
