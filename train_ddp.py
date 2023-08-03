@@ -59,8 +59,8 @@ def dist_trainer(local_rank, dist_num: int, config: dict):
     network_model = builder.get_model()
     logger.info('000000000000000000000000000000000000000000000000000000000000000000000000000')
 
-    # network_model.to(local_rank)
-    network_model.cuda()
+    network_model.to(local_rank)
+    # network_model.cuda()
     logger.info('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
     # convert model to ddp
     network_model = parallel.DistributedDataParallel(network_model,
