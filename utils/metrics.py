@@ -297,7 +297,7 @@ class MetricsRecorder(object):
     """
     Metrics Recorder.
     """
-    def __init__(self, metrics_list, epsilon = 1e-8, depth_scale = 10.0, **kwargs):
+    def __init__(self, metrics_list, epsilon = 1e-8, depth_scale = 10.0, ddp=False, **kwargs):
         """
         Initialization.
 
@@ -313,7 +313,7 @@ class MetricsRecorder(object):
         self.logger = logging.getLogger(__name__)
         self.epsilon = epsilon
         self.depth_scale = depth_scale
-        self.metrics = Metrics(epsilon = epsilon, depth_scale = depth_scale)
+        self.metrics = Metrics(epsilon = epsilon, depth_scale = depth_scale, ddp=ddp)
         self.metrics_list = []
         for metric in metrics_list:
             try:
