@@ -175,8 +175,6 @@ def train_one_epoch(network_model:nn.Module,
                 description = description + key + ": {:.8f}".format(reduced_loss[key].item()) + "  "
             logger.info(description)
             for key in loss_dict.keys():
-                print(key, "train/"+key)
-                reduced_loss[key] = reduce_mean(loss_dict[key], dist_num)
                 summary_writer.add_scalar("train/"+key,
                                           reduced_loss[key].data.cpu().numpy(),
                                           global_step=epoch * train_steps + ts)
