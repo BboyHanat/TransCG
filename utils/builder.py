@@ -4,9 +4,11 @@ Configuration builder.
 Authors: Hongjie Fang.
 """
 import os
+import torch
 import logging
 from utils.logger import ColoredLogger
 from torch.utils.data import ConcatDataset
+from torch.utils.tensorboard import SummaryWriter
 
 
 logging.setLoggerClass(ColoredLogger)
@@ -57,6 +59,8 @@ class ConfigBuilder(object):
         self.metrics_params = params.get('metrics', {})
         self.stats_params = params.get('stats', {})
         self.inference_params = params.get('inference', {})
+        self.summary_param = params.get('summary', {})
+
     
     def get_model(self, model_params = None):
         """
@@ -273,11 +277,51 @@ class ConfigBuilder(object):
         if dataloader_params is None:
             dataloader_params = self.dataloader_params
         dataset = self.get_dataset(dataset_params, split)
+        len_of_dataset = len(dataset)
         return DataLoader(
             dataset,
             batch_size = batch_size,
             **dataloader_params
-        )
+        ), len_of_dataset
+
+    def get_dataloader_ddp(self, dataset_params=None, split='train', batch_size=None, dataloader_params=None):
+        """
+        Get the dataloader from configuration.
+
+        Parameters
+        ----------
+
+        dataset_params: dict, optional, default: None. If dataset_params is provided, then use the parameters specified in the dataset_params to build the dataset. Otherwise, the dataset parameters in the self.params will be used to build the dataset;
+
+        split: str in ['train', 'test'], optional, default: 'train', the splitted dataset;
+
+        batch_size: int, optional, default: None. If batch_size is None, then the batch size parameter in the self.params will be used to represent the batch size (If still not specified, default: 4);
+
+        dataloader_params: dict, optional, default: None. If dataloader_params is provided, then use the parameters specified in the dataloader_params to get the dataloader. Otherwise, the dataloader parameters in the self.params will be used to get the dataloader.
+
+        Returns
+        -------
+
+        A torch.utils.data.DataLoader item.
+        """
+        from torch.utils.data import DataLoader
+        if batch_size is None:
+            if split == 'train':
+                batch_size = self.trainer_params.get('batch_size', 32)
+            else:
+                batch_size = self.trainer_params.get('test_batch_size', 1)
+        if dataloader_params is None:
+            dataloader_params = self.dataloader_params
+        dataset = self.get_dataset(dataset_params, split)
+        train_sampler = torch.utils.data.distributed.DistributedSampler(dataset)
+
+        dataloader_params["sampler"] = train_sampler
+        train_batch_data = DataLoader(dataset,
+                                      batch_size=batch_size,
+                                      **dataloader_params)
+
+        return train_batch_data
+
 
     def get_max_epoch(self, trainer_params = None):
         """
@@ -397,7 +441,18 @@ class ConfigBuilder(object):
         from utils.metrics import MetricsRecorder
         metrics = MetricsRecorder(metrics_list = metrics_list, **metrics_params)
         return metrics
-    
+
+    def get_summary_writer(self, summary_path = None):
+        """
+
+        :param summary_path:
+        :return:
+        """
+        if summary_path is None:
+            summary_path = self.summary_param["summary_path"]
+        summary = SummaryWriter(log_dir=summary_path)
+        return summary
+
     def get_inference_image_size(self, inference_params = None):
         """
         Get the inference image size from inference configuration.
