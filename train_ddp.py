@@ -53,6 +53,7 @@ def dist_trainer(local_rank, dist_num: int, config: dict):
                             init_method=init_method,
                             world_size=dist_num,
                             rank=local_rank)
+    torch.cuda.set_device(local_rank)
 
     builder = ConfigBuilder(**config)
     logger.info('Building models ...11111111111111111111111111111111111111111111111111111111')
