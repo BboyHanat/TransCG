@@ -208,7 +208,7 @@ def test_one_epoch(model,
                 reduced_loss = dict()
                 for key in loss_dict.keys():
                     reduced_loss[key] = reduce_mean(loss_dict[key], dist_num)
-                loss_avg.update(reduced_loss["loss"])
+                loss_avg.update(reduced_loss["loss"], data_dict.size()[0])
                 if local_rank == 0:
                     description = 'Epoch {}, '.format(epoch + 1)
                     for key in reduced_loss.keys():
