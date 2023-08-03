@@ -57,8 +57,9 @@ def dist_trainer(local_rank, dist_num: int, config: dict):
     builder = ConfigBuilder(**config)
     logger.info('Building models ...')
     network_model = builder.get_model()
+    network_model.to(local_rank)
     # convert model to ddp
-    network_model = SyncBatchNorm.convert_sync_batchnorm(network_model).to(local_rank)
+    network_model = SyncBatchNorm.convert_sync_batchnorm(network_model)
     network_model = parallel.DistributedDataParallel(network_model,
                                                      device_ids=[local_rank])
 
