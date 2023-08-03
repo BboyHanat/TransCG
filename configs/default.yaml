@@ -64,7 +64,7 @@
   "stats_exper": "train-tg-val-tg-comb"
 
 dist:
-  dist_num: 2
+  dist_num: 8
   ip: 0.0.0.0
   port: 12345
 
