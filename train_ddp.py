@@ -140,6 +140,8 @@ def dist_trainer(local_rank, dist_num: int, config: dict):
         #                                       criterion, metrics,
         #                                       summary_writer,  local_rank,
         #                                       epoch, test_batch_size, dist_num)
+        loss = 0.1
+        metrics_result = 0.1
         if lr_scheduler is not None:
             lr_scheduler.step()
         criterion.step()
