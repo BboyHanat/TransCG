@@ -320,7 +320,7 @@ class ConfigBuilder(object):
                                 batch_size=batch_size,
                                 **dataloader_params)
 
-        return batch_data, len_of_dataset
+        return batch_data, len_of_dataset, batch_size
 
     def get_max_epoch(self, trainer_params=None):
         """

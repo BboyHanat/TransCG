@@ -85,8 +85,8 @@ def dist_trainer(local_rank, dist_num: int, config: dict):
     network_model = parallel.DistributedDataParallel(network_model,
                                                      device_ids=[local_rank])
     logger.info('Building ddp dataloaders ...')
-    train_dataloader, len_of_train = builder.get_dataloader(split='train')
-    test_dataloader, len_of_val = builder.get_dataloader(split='test')
+    train_dataloader, len_of_train, train_batch_size = builder.get_dataloader_ddp(split='train')
+    test_dataloader, len_of_val, val_batch_size = builder.get_dataloader_ddp(split='test')
 
     logger.info('Building optimizer and learning rate schedulers ...')
     resume = (start_epoch > 0)
@@ -105,7 +105,7 @@ def dist_trainer(local_rank, dist_num: int, config: dict):
         min_loss = LOSS_INF
         min_loss_epoch = None
 
-    train_steps = int(len_of_train / train_cfg['train_batch'] / dist_num)
+    train_steps = int(len_of_train / train_batch_size / dist_num)
 
     for epoch in range(start_epoch, max_epoch):
         logger.info('--> Epoch {}/{}'.format(epoch + 1, max_epoch))
