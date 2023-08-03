@@ -63,7 +63,8 @@ def dist_trainer(local_rank, dist_num: int, config: dict):
     # network_model.cuda()
     logger.info('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
     # convert model to ddp
-    network_model = parallel.DistributedDataParallel(network_model)
+    network_model = parallel.DistributedDataParallel(network_model,
+                                                     device_ids=[local_rank])
     time.sleep(10)
     logger.info('cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc    {}'.format(local_rank))
     network_model = SyncBatchNorm.convert_sync_batchnorm(network_model)
