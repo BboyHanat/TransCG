@@ -203,7 +203,8 @@ def test_one_epoch(model,
     gpu_device = torch.device('cuda:{}'.format(local_rank))
     with torch.no_grad():
         for vs, data_dict in enumerate(test_dataloader):
-
+            if vs >10:
+                break
             data_dict = to_device(data_dict, gpu_device)
             with torch.no_grad():
                 res = model(data_dict['rgb'], data_dict['depth'])
