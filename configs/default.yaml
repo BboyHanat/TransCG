@@ -62,3 +62,7 @@
 "stats":
   "stats_dir": "stats"
   "stats_exper": "train-tg-val-tg-comb"
+
+dist:
+  dist_num: 8
+
