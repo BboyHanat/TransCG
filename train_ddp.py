@@ -232,8 +232,10 @@ def test_one_epoch(model,
         metrics_result_reduce[key] = reduce_mean(metrics_result[key], dist_num)
     if local_rank == 0:
         for key in metrics_result.keys():
+            if key == "samples":
+                continue
             summary_writer.add_scalar(key,
-                                      metrics_result_reduce[key].data.cpu().numpy(),
+                                      metrics_result_reduce[key].item(),
                                       global_step=epoch)
 
     return loss_avg.avg, metrics_result_reduce
