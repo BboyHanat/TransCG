@@ -95,7 +95,7 @@ def dist_trainer(local_rank, dist_num: int, config: dict):
                                             resume_epoch=(start_epoch - 1 if resume else None))
     criterion = builder.get_criterion()
     metrics = builder.get_metrics()
-    summary_writer = builder.get_summary_writer(**config['summary_cfg'])
+    summary_writer = builder.get_summary_writer()
 
     # start training
     if start_epoch != 0:
