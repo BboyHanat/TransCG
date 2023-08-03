@@ -168,7 +168,7 @@ def train_one_epoch(network_model:nn.Module,
         for key in loss_dict.keys():
             reduced_loss[key] = reduce_mean(loss_dict[key], dist_num)
         if local_rank == 0:
-            description = 'Epoch {} Step {}, '.format(epoch + 1, ts)
+            description = 'Epoch {} Step {}/{}, '.format(epoch + 1, ts, train_steps)
             for key in reduced_loss.keys():
                 description = description + key + ": {:.8f}".format(reduced_loss[key].item()) + "  "
             logger.info(description)
