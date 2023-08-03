@@ -82,7 +82,7 @@ def dist_trainer(local_rank, dist_num: int, config: dict):
     if local_rank == 0:
         logger.info('Building optimizer and learning rate schedulers ...')
     resume = (start_epoch > 0)
-    optimizer = builder.get_optimizer(network_model.module, resume=resume, resume_lr=builder.get_resume_lr())
+    optimizer = builder.get_optimizer(network_model, resume=resume, resume_lr=builder.get_resume_lr())
 
     if local_rank == 0:
         logger.info('Building ddp dataloaders ...')
