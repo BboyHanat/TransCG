@@ -9,6 +9,7 @@ import warnings
 import numpy as np
 import torch.nn as nn
 from tqdm import tqdm
+import torch.distributed as dist
 import torch.backends.cudnn as cudnn
 from utils.logger import ColoredLogger
 from utils.builder import ConfigBuilder
