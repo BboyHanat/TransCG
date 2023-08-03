@@ -174,11 +174,11 @@ def train_one_epoch(network_model:nn.Module,
             for key in reduced_loss.keys():
                 description = description + key + ": {:.8f}".format(reduced_loss[key].item()) + "  "
             logger.info(description)
-            for key in loss_dict.keys():
-                reduced_loss[key] = reduce_mean(loss_dict[key], dist_num)
-                summary_writer.add_scalar("train/"+key,
-                                          reduced_loss[key].data.cpu().numpy(),
-                                          global_step=epoch * train_steps + ts)
+            # for key in loss_dict.keys():
+            #     reduced_loss[key] = reduce_mean(loss_dict[key], dist_num)
+            #     summary_writer.add_scalar("train/"+key,
+            #                               reduced_loss[key].data.cpu().numpy(),
+            #                               global_step=epoch * train_steps + ts)
 
 def test_one_epoch(model,
                    test_dataloader,
