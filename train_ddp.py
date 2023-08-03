@@ -136,10 +136,10 @@ def dist_trainer(local_rank, dist_num: int, config: dict):
                         lr_scheduler, summary_writer,
                         local_rank, train_steps,
                         epoch, dist_num)
-        loss, metrics_result = test_one_epoch(network_model, test_dataloader,
-                                              criterion, metrics,
-                                              summary_writer,  local_rank,
-                                              epoch, test_batch_size, dist_num)
+        # loss, metrics_result = test_one_epoch(network_model, test_dataloader,
+        #                                       criterion, metrics,
+        #                                       summary_writer,  local_rank,
+        #                                       epoch, test_batch_size, dist_num)
         if lr_scheduler is not None:
             lr_scheduler.step()
         criterion.step()
