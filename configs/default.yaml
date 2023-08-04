@@ -42,7 +42,7 @@
   "num_workers": 24
   "shuffle": False
   "drop_last": True
-  "pin_memory": True
+  "pin_memory": False
   "persistent_workers": False
 
 "trainer":
