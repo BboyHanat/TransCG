@@ -2,7 +2,7 @@
   "type": "DFNet"
   "params":
     "in_channels": 4
-    "hidden_channels": 64
+    "hidden_channels": 96
     "L": 5
     "k": 12
 
@@ -39,15 +39,15 @@
     "with_original": True
 
 "dataloader":
-  "num_workers": 24
+  "num_workers": 16
   "shuffle": False
   "drop_last": True
   "pin_memory": True
   "persistent_workers": False
 
 "trainer":
-  "batch_size": 32
-  "test_batch_size": 24
+  "batch_size": 16
+  "test_batch_size": 16
   "multigpu": True
   "max_epoch": 300
   "criterion":
