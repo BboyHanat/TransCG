@@ -39,10 +39,10 @@
     "with_original": True
 
 "dataloader":
-  "num_workers": 24
+  "num_workers": 16
   "shuffle": False
   "drop_last": True
-  "pin_memory": False
+  "pin_memory": True
   "persistent_workers": False
 
 "trainer":
