@@ -43,7 +43,7 @@
   "shuffle": False
   "drop_last": True
   "pin_memory": True
-  "persistent_workers": True
+  "persistent_workers": False
 
 "trainer":
   "batch_size": 32
