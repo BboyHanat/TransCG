@@ -39,9 +39,11 @@
     "with_original": True
 
 "dataloader":
-  "num_workers": 12
+  "num_workers": 24
   "shuffle": False
   "drop_last": True
+  "pin_memory": True
+  "persistent_workers": True
 
 "trainer":
   "batch_size": 32
