@@ -2,7 +2,7 @@
   "type": "DFNet"
   "params":
     "in_channels": 4
-    "hidden_channels": 96
+    "hidden_channels": 256
     "L": 5
     "k": 12
 
