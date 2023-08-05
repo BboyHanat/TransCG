@@ -53,7 +53,7 @@
       "depth_norm": 1.0
 
 "dataloader":
-  "num_workers": 12
+  "num_workers": 24
   "shuffle": False
   "drop_last": True
 
