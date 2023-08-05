@@ -122,6 +122,8 @@ def dist_trainer(local_rank, dist_num: int, config: dict):
                         lr_scheduler, summary_writer,
                         local_rank, train_steps,
                         epoch, dist_num)
+        if local_rank == 0:
+            logger.info('Start testing process in epoch {}.'.format(epoch + 1))
         loss, metrics_result = test_one_epoch(network_model, test_dataloader,
                                               criterion, metrics,
                                               summary_writer,  local_rank,
@@ -195,8 +197,6 @@ def test_one_epoch(model,
                    epoch,
                    batch_size,
                    dist_num):
-
-    logger.info('Start testing process in epoch {}.'.format(epoch + 1))
     model.eval()
     metrics.clear()
     loss_avg = AverageMeter('loss', ':.4e')
