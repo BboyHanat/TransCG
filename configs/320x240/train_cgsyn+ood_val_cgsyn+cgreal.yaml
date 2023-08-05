@@ -74,3 +74,12 @@
 "stats":
   "stats_dir": "stats"
   "stats_exper": "train-cgsyn-ood-val-cgsyn-cgreal"
+
+dist:
+  dist_num: 8
+  ip: 0.0.0.0
+  port: 12345
+
+summary:
+  summary_path: ./stats/log_dir
+
