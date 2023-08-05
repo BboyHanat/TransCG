@@ -45,9 +45,9 @@ def draw_point_cloud(color, depth, camera_intrinsics, use_mask = False, use_inpa
 
 inferencer = Inferencer()
 
-rgb = np.array(Image.open('/home/hanat/workspace/dataset/depth_completion/color/61.png'), dtype = np.float32)
-depth = np.array(Image.open('/home/hanat/workspace/dataset/depth_completion/depth/61.png'), dtype = np.float32)
-depth_gt = np.array(Image.open('/home/hanat/workspace/dataset/depth_completion/depth/61.png'), dtype = np.float32)
+rgb = np.array(Image.open('/home/hanat/workspace/dataset/depth_completion/color/20.png'), dtype = np.float32)
+depth = np.array(Image.open('/home/hanat/workspace/dataset/depth_completion/depth/20.png'), dtype = np.float32)
+depth_gt = np.array(Image.open('/home/hanat/workspace/dataset/depth_completion/depth/20.png'), dtype = np.float32)
 
 depth = depth / 1000
 depth_gt = depth_gt / 1000

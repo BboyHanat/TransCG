@@ -2,12 +2,12 @@
   "type": "DFNet"
   "params":
     "in_channels": 4
-    "hidden_channels": 64
+    "hidden_channels": 128
     "L": 5
     "k": 12
 
 "inference":
-  "checkpoint_path": "stats/checkpoint-epoch89.tar"
+  "checkpoint_path": "stats/checkpoint-epoch24.tar"
   "image_size": !!python/tuple [320, 240]
   "cuda_id": 0
   "depth_min": 0.3
