@@ -54,7 +54,7 @@
 
 "dataloader":
   "num_workers": 48
-  "shuffle": True
+  "shuffle": False
   "drop_last": True
 
 "trainer":
