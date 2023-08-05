@@ -1,7 +1,7 @@
 pillow
 tqdm
 h5py
-numpy
+numpy==1.22.0
 scipy
 Imath
 einops

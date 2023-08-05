@@ -53,13 +53,13 @@
       "depth_norm": 1.0
 
 "dataloader":
-  "num_workers": 48
+  "num_workers": 12
   "shuffle": False
   "drop_last": True
 
 "trainer":
-  "batch_size": 32
-  "test_batch_size": 1
+  "batch_size": 16
+  "test_batch_size": 16
   "multigpu": True
   "max_epoch": 40  
   "criterion":
