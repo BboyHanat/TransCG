@@ -70,6 +70,7 @@
   "types": ["MSE", "MaskedMSE", "RMSE", "MaskedRMSE", "REL", "MaskedREL", "MAE", "MaskedMAE", "Threshold@1.05", "MaskedThreshold@1.05", "Threshold@1.10", "MaskedThreshold@1.10", "Threshold@1.25", "MaskedThreshold@1.25"]
   "epsilon": 0.00000001
   "depth_scale": 1.0
+  "ddp": True         # if use ddp train
 
 "stats":
   "stats_dir": "stats"
