@@ -21,7 +21,7 @@
 "dataset":
   "train":
     - "type": "cleargrasp-syn"
-      "data_dir": "/data/hanat/cleargrasp/cleargrasp-dataset-train"
+      "data_dir": "/data/hanat/cleargrasp"
       "image_size": !!python/tuple [320, 240]
       "use_augmentation": True
       "rgb_augmentation_probability": 0.8
@@ -38,14 +38,14 @@
       "depth_norm": 1.0
   "test":
     - "type": "cleargrasp-syn"
-      "data_dir": "/data/hanat/cleargrasp/cleargrasp-dataset-test-val"
+      "data_dir": "/data/hanat/cleargrasp"
       "image_size": !!python/tuple [320, 240]
       "use_augmentation": False
       "depth_min": 0.3
       "depth_max": 1.5
       "depth_norm": 1.0
     - "type": "cleargrasp-real"
-      "data_dir": "/data/hanat/cleargrasp/cleargrasp-dataset-test-val"
+      "data_dir": "/data/hanat/cleargrasp"
       "image_size": !!python/tuple [320, 240]
       "use_augmentation": False
       "depth_min": 0.3
