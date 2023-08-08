@@ -52,7 +52,7 @@ depth_gt = np.array(Image.open('/home/hanat/workspace/dataset/depth_completion/d
 depth = depth / 1000
 depth_gt = depth_gt / 1000
 
-res, depth = inferencer.inference(rgb, depth, target_size = (640, 480), depth_coefficient = 3, inpainting = True)
+res, depth = inferencer.inference(rgb, depth, target_size = (640, 480), depth_coefficient = 100, inpainting = True)
 
 # cam_intrinsics = np.load('/home/hanat/workspace/dataset/camera_intrinsics/1-camIntrinsics-D435.npy')
 cam_intrinsics = np.asarray([[608.0112915, 0., 329.24252319],
