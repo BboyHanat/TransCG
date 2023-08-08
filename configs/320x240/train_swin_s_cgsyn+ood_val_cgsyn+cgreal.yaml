@@ -23,7 +23,7 @@
   "train":
     - "type": "cleargrasp-syn"
       "data_dir": "/data/hanat/cleargrasp"
-      "image_size": !!python/tuple [320, 240]
+      "image_size": !!python/tuple [384, 256]
       "use_augmentation": True
       "rgb_augmentation_probability": 0.8
       "depth_min": 0.3
@@ -31,7 +31,7 @@
       "depth_norm": 1.0
     - "type": "omniverse"
       "data_dir": "/data/hanat/omniverse_v3/omniverse_v3"
-      "image_size": !!python/tuple [320, 240]
+      "image_size": !!python/tuple [384, 256]
       "use_augmentation": True
       "rgb_augmentation_probability": 0.8
       "depth_min": 0.3
@@ -40,7 +40,7 @@
   "test":
     - "type": "cleargrasp-syn"
       "data_dir": "/data/hanat/cleargrasp"
-      "image_size": !!python/tuple [320, 240]
+      "image_size": !!python/tuple [384, 256]
       "use_augmentation": False
       "depth_min": 0.3
       "depth_max": 1.5

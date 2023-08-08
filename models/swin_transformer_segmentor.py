@@ -58,7 +58,7 @@ if __name__ == "__main__":
     if torch.cuda.is_available():
         s_win.cuda()
     s_win.eval()
-    state_dict = torch.load('stats/swin_small_patch4_window7_224_22k.pth',
+    state_dict = torch.load('/home/hanat/workspace/code/TransCG/stats/swin_small_patch4_window7_224_22k.pth',
                             map_location='cpu')['model']
 
     delete_list = list()
@@ -95,10 +95,10 @@ if __name__ == "__main__":
             print("key not in pth: ", key)
             new_dict.update({key: s_win.backbone.state_dict()[key]})
 
-    torch.save(new_dict, "stats/swin-small-22k.pth")
+    torch.save(new_dict, "/home/hanat/workspace/code/TransCG/stats/swin-small-22k.pth")
 
-    input_tensor = torch.zeros(size=(1, 3, 1024, 512))
-    depth_tensor = torch.zeros(size=(1, 1, 1024, 512))
+    input_tensor = torch.zeros(size=(2, 3, 384, 256))
+    depth_tensor = torch.zeros(size=(2, 384, 256))
     if torch.cuda.is_available():
         input_tensor = input_tensor.cuda()
         depth_tensor = depth_tensor.cuda()
