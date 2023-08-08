@@ -88,7 +88,7 @@ class ConfigBuilder(object):
             model = SwinSeg(**params)
             if pretrained:
                 state_dict = torch.load(pretrained, map_location="cpu")
-                model.load_state_dict(state_dict)
+                model.backbone.load_state_dict(state_dict)
         else:
             raise NotImplementedError('Invalid model type.')
         return model
