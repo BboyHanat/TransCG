@@ -76,11 +76,14 @@ class ConfigBuilder(object):
         A model, which is usually a torch.nn.Module object.
         """
         from models.DFNet import DFNet
+        from models.swin_transformer_segmentor import SwinSeg
         if model_params is None:
             model_params = self.model_params
         type = model_params.get('type', 'DFNet')
         params = model_params.get('params', {})
         if type == 'DFNet':
+            model = DFNet(**params)
+        elif type == 'SwinSeg':
             model = DFNet(**params)
         else:
             raise NotImplementedError('Invalid model type.')

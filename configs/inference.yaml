@@ -7,7 +7,7 @@
     "k": 12
 
 "inference":
-  "checkpoint_path": "stats/checkpoint-epoch24.tar"
+  "checkpoint_path": "stats/checkpoint-epoch39.tar"
   "image_size": !!python/tuple [320, 240]
   "cuda_id": 0
   "depth_min": 0.3
