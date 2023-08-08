@@ -292,13 +292,13 @@ def process_data(
     depth_original = process_depth(depth.copy(), camera_type = camera_type, depth_min = depth_min, depth_max = depth_max, depth_norm = depth_norm)
     depth_gt_original = process_depth(depth_gt.copy(), camera_type = camera_type,  depth_min = depth_min, depth_max = depth_max, depth_norm = depth_norm)
     depth_gt_mask_original = depth_gt_mask.copy()
-    zero_mask_original = np.where(depth_gt_original < 0.01, False, True).astype(np.bool)
+    zero_mask_original = np.where(depth_gt_original < 0.01, False, True).astype(bool)
 
     rgb = cv2.resize(rgb, image_size, interpolation = cv2.INTER_NEAREST)
     depth = cv2.resize(depth, image_size, interpolation = cv2.INTER_NEAREST)
     depth_gt = cv2.resize(depth_gt, image_size, interpolation = cv2.INTER_NEAREST)
     depth_gt_mask = cv2.resize(depth_gt_mask, image_size, interpolation = cv2.INTER_NEAREST)
-    depth_gt_mask = depth_gt_mask.astype(np.bool)
+    depth_gt_mask = depth_gt_mask.astype(bool)
 
     # depth processing
     depth, d_mu, d_std = process_depth(depth, camera_type = camera_type, depth_min = depth_min, depth_max = depth_max, depth_norm = depth_norm, depth_mu = None, depth_std = None, depth_coeff = depth_coeff, return_mu_std = True, inpainting = inpainting)
