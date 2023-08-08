@@ -57,6 +57,7 @@ class DecodeHead(nn.Module):
         x = feature_list[-1]
         net_idx = 0
         for idx in range(len(self.up_network) - 1, -1, -1):
+            print(x.szie(), feature_list[idx].size())
             x = self.up_network[net_idx](x) + feature_list[idx]
             net_idx += 1
         x = self.output(x)

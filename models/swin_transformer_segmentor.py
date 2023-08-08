@@ -47,7 +47,6 @@ class SwinSeg(nn.Module):
 
     def forward(self, rgb, depth):
         depth = depth.unsqueeze(1)
-        print("rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr: ", rgb.size(), depth.size())
         feature_list = self.backbone(rgb, depth)
         output_map = self.decode_head(feature_list)
         return output_map
