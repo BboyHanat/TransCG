@@ -1,8 +1,9 @@
 # script id: 2
 "model":
   "type": "SwinSeg"
+  "pretrained": stats/swin-small-22k.pth
   "params":
-    "channel_in_list": [768, 384, 192, 96]
+    "channel_list": [768, 384, 192, 96]
     "in_chans": 4
     "depths": [2, 2, 18, 2]
     "class_num": 1
