@@ -33,7 +33,7 @@ class DecodeHead(nn.Module):
         super(DecodeHead, self).__init__()
 
         if not kernel_size_list:
-            kernel_size_list = [3, 5, 5, 1]
+            kernel_size_list = [3, 5, 5, 5]
 
         assert len(channel_in_list) == len(kernel_size_list)
 
