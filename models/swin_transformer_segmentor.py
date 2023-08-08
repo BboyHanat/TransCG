@@ -1,9 +1,10 @@
 import torch
 from torch import nn
-
+from einops import rearrange
 from models.swin.decode_head import DecodeHead
-from models.swin.transformer_decode_head import TransformerDecodeHead
 from models.swin.swin_transformer import SwinTransformer
+from models.swin.transformer_decode_head import TransformerDecodeHead
+
 
 
 def check_keywords_in_name(name, keywords=()):
@@ -49,7 +50,7 @@ class SwinSeg(nn.Module):
         depth = depth.unsqueeze(1)
         feature_list = self.backbone(rgb, depth)
         output_map = self.decode_head(feature_list)
-        return output_map
+        return rearrange(output_map, 'n 1 h w -> n h w')
 
 
 if __name__ == "__main__":
