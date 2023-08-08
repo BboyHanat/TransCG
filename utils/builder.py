@@ -81,10 +81,14 @@ class ConfigBuilder(object):
             model_params = self.model_params
         type = model_params.get('type', 'DFNet')
         params = model_params.get('params', {})
+        pretrained =  model_params.get('pretrained', "")
         if type == 'DFNet':
             model = DFNet(**params)
         elif type == 'SwinSeg':
-            model = DFNet(**params)
+            model = SwinSeg(**params)
+            if pretrained:
+                state_dict = torch.load(pretrained, map_location="cpu")
+                model.load_state_dict(state_dict)
         else:
             raise NotImplementedError('Invalid model type.')
         return model
