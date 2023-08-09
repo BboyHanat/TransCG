@@ -232,7 +232,7 @@ def test_one_epoch(model,
         for key in metrics_result.keys():
             if key == "samples":
                 continue
-            summary_writer.add_scalar(key,
+            summary_writer.add_scalar("val/"+key,
                                       metrics_result_reduce[key].item(),
                                       global_step=epoch)
 
