@@ -25,7 +25,7 @@
       "data_dir": "/data/hanat/cleargrasp"
       "image_size": !!python/tuple [384, 256]
       "use_augmentation": True
-      "rgb_augmentation_probability": 0.8
+      "rgb_augmentation_probability": 0.3
       "depth_min": 0.3
       "depth_max": 1.5
       "depth_norm": 1.0
@@ -33,7 +33,15 @@
       "data_dir": "/data/hanat/omniverse_v3/omniverse_v3"
       "image_size": !!python/tuple [384, 256]
       "use_augmentation": True
-      "rgb_augmentation_probability": 0.8
+      "rgb_augmentation_probability": 0.3
+      "depth_min": 0.3
+      "depth_max": 1.5
+      "depth_norm": 1.0
+    - "type": "transcg"
+      "data_dir": "/data/hanat/transcg/transcg"
+      "image_size": !!python/tuple [ 384, 256 ]
+      "use_augmentation": True
+      "rgb_augmentation_probability": 0.3
       "depth_min": 0.3
       "depth_max": 1.5
       "depth_norm": 1.0
